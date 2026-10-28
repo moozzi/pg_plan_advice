@@ -9,7 +9,8 @@ Gem::Specification.new do |spec|
   spec.email = ["bieniek.milosz0@gmail.com"]
 
   spec.summary = "ActiveRecord DSL for PostgreSQL pg_plan_advice."
-  spec.description = "Apply PostgreSQL 19 pg_plan_advice query plan advice to ActiveRecord queries using a simple Ruby DSL."
+  spec.description = "Apply PostgreSQL 19 pg_plan_advice query plan advice to ActiveRecord queries using a " \
+                     "simple Ruby DSL."
   spec.homepage = "https://github.com/moozzi/pg_plan_advice"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 3.2.0"
