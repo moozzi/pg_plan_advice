@@ -26,6 +26,7 @@ module PgPlanAdvice
     def foreign_join(*targets) = add(Ast::ForeignJoin, targets)
     def bitmap_heap_scan(*targets) = add(Ast::BitmapHeapScan, targets)
     def do_not_scan(*targets) = add(Ast::DoNotScan, targets)
+
     #
     # Join order advice
     #
@@ -37,6 +38,7 @@ module PgPlanAdvice
     # ( join_order_item [ ... ] ) |
     # { join_order_item [ ... ] }
     #
+    def join_order(*targets) = add(Ast::JoinOrder, targets)
 
     #
     # Join method advice
