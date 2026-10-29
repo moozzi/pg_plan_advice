@@ -112,17 +112,6 @@ module PgPlanAdvice
         raise ArgumentError, "invalid item"
       end
     end
-
-    # def resolve(targets)
-    #   targets.map do |target|
-    #     case target
-    #     when Symbol then target.to_s
-    #     when Array  then "(#{resolve(target)})"
-    #     else
-    #       raise "invalid advice_target"
-    #     end
-    #   end.join(" ")
-    # end
   end
 
   def self.build(&block)
