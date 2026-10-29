@@ -19,7 +19,13 @@ module PgPlanAdvice
     # BITMAP_HEAP_SCAN(target [ ... ])
     # DO_NOT_SCAN(target [ ... ])
     #
-
+    def seq_scan(*targets) = add(Ast::SeqScan, targets)
+    def tid_scan(*targets) = add(Ast::TidScan, targets)
+    def index_scan(targets) = add_index(Ast::IndexScan, targets)
+    def index_only_scan(*targets) = add_index(Ast::IndexOnlyScan, targets)
+    def foreign_join(*targets) = add(Ast::ForeignJoin, targets)
+    def bitmap_heap_scan(*targets) = add(Ast::BitmapHeapScan, targets)
+    def do_not_scan(*targets) = add(Ast::DoNotScan, targets)
     #
     # Join order advice
     #
@@ -46,7 +52,6 @@ module PgPlanAdvice
     # { advice_target |
     # ( advice_target [ ... ] ) }
     #
-
     def merge_join_materialize(*targets)  = add(Ast::MergeJoinMaterialize, targets)
     def merge_join_plain(*targets)        = add(Ast::MergeJoinPlain, targets)
     def nested_loop_materialize(*targets) = add(Ast::NestedLoopMaterialize, targets)
@@ -102,12 +107,23 @@ module PgPlanAdvice
       self
     end
 
+    def add_index(node_class, targets)
+      raise "invalid argument for index_scan/index_only_scan in #{targets}" if !targets.is_a?(Hash)
+
+      @items << node_class.new(normalize(targets))
+      self
+    end
+
     def normalize(item)
       case item
       when Ast::Target, Ast::OrderedGroup, Ast::UnorderedGroup
         item
       when Symbol, String
         Ast::Target.new(item)
+      when Hash
+        item.map do |target, index_name|
+          Ast::IndexTarget.new(target, index_name)
+        end
       else
         raise ArgumentError, "invalid item"
       end

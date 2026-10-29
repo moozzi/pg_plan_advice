@@ -15,9 +15,10 @@ module PgPlanAdvice
         targets.map do |target|
           case target
           when Ast::Target         then target.alias_name
+          when Ast::IndexTarget    then "(#{target.target} #{target.index_name})"
           when Ast::OrderedGroup   then "(#{serialize_targets(target.items)})"
           when Ast::UnorderedGroup then "{#{serialize_targets(target.items)}}"
-          else raise "invalid target"
+          else raise "invalid target #{target.class}"
           end
         end.join(" ")
       end
