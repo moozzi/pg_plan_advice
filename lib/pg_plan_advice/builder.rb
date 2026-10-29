@@ -22,7 +22,7 @@ module PgPlanAdvice
     def seq_scan(*targets) = add(Ast::SeqScan, targets)
     def tid_scan(*targets) = add(Ast::TidScan, targets)
     def index_scan(targets) = add_index(Ast::IndexScan, targets)
-    def index_only_scan(*targets) = add_index(Ast::IndexOnlyScan, targets)
+    def index_only_scan(targets) = add_index(Ast::IndexOnlyScan, targets)
     def foreign_join(*targets) = add(Ast::ForeignJoin, targets)
     def bitmap_heap_scan(*targets) = add(Ast::BitmapHeapScan, targets)
     def do_not_scan(*targets) = add(Ast::DoNotScan, targets)
@@ -99,7 +99,7 @@ module PgPlanAdvice
     # { advice_target |
     # ( advice_target [ ... ] ) }
     #
-    def gather(*targets)       = add(Asl::Gather, targets)
+    def gather(*targets)       = add(Ast::Gather, targets)
     def gather_merge(*targets) = add(Ast::GatherMerge, targets)
     def no_gather(*targets)    = add(Ast::NoGather, targets)
 
@@ -116,7 +116,7 @@ module PgPlanAdvice
     end
 
     def add_index(node_class, targets)
-      raise "invalid argument for index_scan/index_only_scan in #{targets}" if !targets.is_a?(Hash)
+      raise "invalid argument for index_scan/index_only_scan in #{targets}" unless targets.is_a?(Hash)
 
       @items << node_class.new(normalize(targets))
       self
@@ -130,10 +130,10 @@ module PgPlanAdvice
         Ast::Target.new(item)
       when Hash
         item.map do |target, index_name|
-          Ast::IndexTarget.new(target, index_name)
+          Ast::IndexTarget.new(Ast::Target.new(target), index_name)
         end
       else
-        raise ArgumentError, "invalid item"
+        raise ArgumentError, "invalid item: #{item.inspect}"
       end
     end
   end

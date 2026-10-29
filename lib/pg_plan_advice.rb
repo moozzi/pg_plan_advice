@@ -5,4 +5,5 @@ require_relative "pg_plan_advice/builder"
 
 module PgPlanAdvice
   class Error < StandardError; end
+  class InvalidAdviceError < StandardError; end
 end

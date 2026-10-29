@@ -1,14 +1,16 @@
 module PgPlanAdvice
   module Ast
-    class SemijoinNonUnique
-      attr_reader :targets
+    class SemijoinNonUnique < Node
+      def initialize(targets:)
+        raise InvalidAdviceError, "#{advice_name} targets must not be empty" if targets.empty?
 
-      def initialize(targets)
-        @targets = targets
+        validate_nested_items!(targets)
+
+        super(targets: targets.dup.freeze)
       end
 
       def self.advice_name
-        "SEMIJOIN_UNON_NIQUE"
+        "SEMIJOIN_NON_UNIQUE"
       end
     end
   end

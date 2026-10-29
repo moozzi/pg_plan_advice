@@ -1,3 +1,4 @@
+require_relative "./ast/node"
 require_relative "./ast/target"
 require_relative "./ast/index_target"
 require_relative "./ast/ordered_group"
