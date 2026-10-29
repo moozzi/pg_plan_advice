@@ -1,3 +1,7 @@
+require_relative "./ast/target"
+require_relative "./ast/ordered_group"
+require_relative "./ast/unordered_group"
+
 require_relative "./ast/advice_set"
 require_relative "./ast/hash_join"
 require_relative "./ast/merge_join_materialize"

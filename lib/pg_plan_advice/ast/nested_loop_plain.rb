@@ -1,6 +1,8 @@
 module PgPlanAdvice
   module Ast
     class NestedLoopPlain
+      attr_reader :targets
+
       def initialize(targets)
         @targets = targets
       end

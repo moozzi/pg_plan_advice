@@ -47,12 +47,12 @@ module PgPlanAdvice
     # ( advice_target [ ... ] ) }
     #
 
-    def merge_join_materialize(*targets)  = add(Ast::MergeJoinMaterialize.new(resolve(targets)))
-    def merge_join_plain(*targets)        = add(Ast::MergeJoinPlain.new(resolve(targets)))
-    def nested_loop_materialize(*targets) = add(Ast::NestedLoopMaterialize.new(resolve(targets)))
-    def nested_loop_memoize(*targets)     = add(Ast::NestedLoopMemoize.new(resolve(targets)))
-    def nested_loop_plain(*targets)       = add(Ast::NestedLoopPlain.new(resolve(targets)))
-    def hash_join(*targets)               = add(Ast::HashJoin.new(resolve(targets)))
+    def merge_join_materialize(*targets)  = add(Ast::MergeJoinMaterialize, targets)
+    def merge_join_plain(*targets)        = add(Ast::MergeJoinPlain, targets)
+    def nested_loop_materialize(*targets) = add(Ast::NestedLoopMaterialize, targets)
+    def nested_loop_memoize(*targets)     = add(Ast::NestedLoopMemoize, targets)
+    def nested_loop_plain(*targets)       = add(Ast::NestedLoopPlain, targets)
+    def hash_join(*targets)               = add(Ast::HashJoin, targets)
 
     #
     # Partitionwise advice
@@ -92,23 +92,37 @@ module PgPlanAdvice
 
     def result = Ast::AdviceSet.new(@items)
 
+    def ordered(*targets)   = Ast::OrderedGroup.new(targets.map { |target| normalize(target) })
+    def unordered(*targets) = Ast::UnorderedGroup.new(targets.map { |target| normalize(target) })
+
     private
 
-    def add(node)
-      @items << node
+    def add(node_class, targets)
+      @items << node_class.new(targets.map { |target| normalize(target) })
       self
     end
 
-    def resolve(targets)
-      targets.map do |target|
-        case target
-        when Symbol then target.to_s
-        when Array  then "(#{resolve(target)})"
-        else
-          raise "invalid advice_target"
-        end
-      end.join(" ")
+    def normalize(item)
+      case item
+      when Ast::Target, Ast::OrderedGroup, Ast::UnorderedGroup
+        item
+      when Symbol, String
+        Ast::Target.new(item)
+      else
+        raise ArgumentError, "invalid item"
+      end
     end
+
+    # def resolve(targets)
+    #   targets.map do |target|
+    #     case target
+    #     when Symbol then target.to_s
+    #     when Array  then "(#{resolve(target)})"
+    #     else
+    #       raise "invalid advice_target"
+    #     end
+    #   end.join(" ")
+    # end
   end
 
   def self.build(&block)

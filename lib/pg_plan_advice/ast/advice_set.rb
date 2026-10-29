@@ -6,7 +6,7 @@ module PgPlanAdvice
       end
 
       def to_s
-        @nodes
+        @nodes.map { |node| "#{node.class.advice_name}(#{node.targets})" }.join(" ")
       end
     end
   end
