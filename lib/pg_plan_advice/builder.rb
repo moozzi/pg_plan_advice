@@ -69,6 +69,7 @@ module PgPlanAdvice
     # { advice_target |
     # ( advice_target [ ... ] ) }
     #
+    def partitionwise(*targets)  = add(Ast::Partitionwise, targets)
 
     #
     # Semijoin uniqueness advice
