@@ -8,7 +8,7 @@ module PgPlanAdvice
       end
 
       def self.advice_name
-        "BitmapHeapScan"
+        "BITMAP_HEAP_SCAN"
       end
     end
   end
