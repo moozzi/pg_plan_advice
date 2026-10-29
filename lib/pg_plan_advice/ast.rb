@@ -16,6 +16,8 @@ require_relative "./ast/nested_loop_materialize"
 require_relative "./ast/nested_loop_memoize"
 require_relative "./ast/nested_loop_plain"
 require_relative "./ast/partitionwise"
+require_relative "./ast/semijoin_non_unique"
+require_relative "./ast/semijoin_unique"
 require_relative "./ast/seq_scan"
 require_relative "./ast/tid_scan"
 

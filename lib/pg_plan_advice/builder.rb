@@ -69,7 +69,7 @@ module PgPlanAdvice
     # { advice_target |
     # ( advice_target [ ... ] ) }
     #
-    def partitionwise(*targets)  = add(Ast::Partitionwise, targets)
+    def partitionwise(*targets) = add(Ast::Partitionwise, targets)
 
     #
     # Semijoin uniqueness advice
@@ -82,6 +82,8 @@ module PgPlanAdvice
     # { advice_target |
     # ( advice_target [ ... ] ) }
     #
+    def semijoin_unique(*targets)     = add(Ast::SemijoinUnique, targets)
+    def semijoin_non_unique(*targets) = add(Ast::SemijoinNonUnique, targets)
 
     #
     # Parallel query advice
