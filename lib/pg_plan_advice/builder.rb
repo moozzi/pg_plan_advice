@@ -97,6 +97,9 @@ module PgPlanAdvice
     # { advice_target |
     # ( advice_target [ ... ] ) }
     #
+    def gather(*targets)       = add(Asl::Gather, targets)
+    def gather_merge(*targets) = add(Ast::GatherMerge, targets)
+    def no_gather(*targets)    = add(Ast::NoGather, targets)
 
     def result = Ast::AdviceSet.new(@items)
 
