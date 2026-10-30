@@ -1,11 +1,11 @@
 require_relative "./ast"
+require_relative "./default_resolver"
 
 module PgPlanAdvice
   class Builder
-    attr_accessor :items # to remove?
-
-    def initialize
+    def initialize(resolver: DefaultResolver.new)
       @items = []
+      @resolver = resolver
     end
 
     #
@@ -124,16 +124,8 @@ module PgPlanAdvice
 
     def normalize(item)
       case item
-      when Ast::Target, Ast::OrderedGroup, Ast::UnorderedGroup
-        item
-      when Symbol, String
-        Ast::Target.new(item)
-      when Hash
-        item.map do |target, index_name|
-          Ast::IndexTarget.new(Ast::Target.new(target), index_name)
-        end
-      else
-        raise ArgumentError, "invalid item: #{item.inspect}"
+      when Ast::Target, Ast::OrderedGroup, Ast::UnorderedGroup then item
+      else @resolver.resolve(item)
       end
     end
   end
