@@ -7,7 +7,7 @@ module PgPlanAdvice
         invalid = targets.reject { |target| target.is_a?(OrderedGroup) }
         unless invalid.empty?
           raise InvalidAdviceError,
-                "#{advice_name} accepts only targets, got: #{invalid.inspect}"
+                "#{advice_name} accepts only ordered(), got: #{invalid.inspect}"
         end
 
         super(targets: targets.dup.freeze)

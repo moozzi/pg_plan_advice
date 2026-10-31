@@ -30,17 +30,17 @@ RSpec.describe PgPlanAdvice::Ast::ForeignJoin do
 
     it "raises on plain targets" do
       expect { described_class.new(targets: [target("a")]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only targets, got: \[.*Target/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only ordered\(\), got: \[.*Target/)
     end
 
     it "raises on unordered groups" do
       expect { described_class.new(targets: [unordered_group(target("a"))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only targets, got: \[.*UnorderedGroup/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only ordered\(\), got: \[.*UnorderedGroup/)
     end
 
     it "raises on non-AST items" do
       expect { described_class.new(targets: ["a"]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'FOREIGN_JOIN accepts only targets, got: ["a"]')
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'FOREIGN_JOIN accepts only ordered(), got: ["a"]')
     end
 
     it "compares by value" do
