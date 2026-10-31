@@ -28,25 +28,19 @@ RSpec.describe PgPlanAdvice::Ast::NoGather do
         .to raise_error(PgPlanAdvice::InvalidAdviceError, "NO_GATHER targets must not be empty")
     end
 
-    it "accepts flat ordered groups" do
-      targets = [target("a"), ordered_group(target("b"), target("c"))]
-
-      expect(described_class.new(targets: targets).targets).to eq(targets)
-    end
-
-    it "raises on nested ordered groups" do
-      expect { described_class.new(targets: [ordered_group(target("a"), ordered_group(target("b")))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, "NO_GATHER: does not allow nesting")
+    it "raises on ordered groups" do
+      expect { described_class.new(targets: [target("b"), ordered_group(target("a"))]) }
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only target, got: \[.*OrderedGroup/)
     end
 
     it "raises on unordered groups" do
       expect { described_class.new(targets: [unordered_group(target("a"))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /\ANO_GATHER: invalid target: .*UnorderedGroup/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only target, got: \[.*UnorderedGroup/)
     end
 
     it "raises on non-AST items" do
       expect { described_class.new(targets: ["a"]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'NO_GATHER: invalid target: "a"')
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'NO_GATHER accepts only target, got: ["a"]')
     end
 
     it "compares by value" do
