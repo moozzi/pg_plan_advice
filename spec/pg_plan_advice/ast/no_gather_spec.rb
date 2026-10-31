@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PgPlanAdvice::Ast::NoGather do
-  it "has advice_name NO_GATHER" do
-    expect(described_class.advice_name).to eq("NO_GATHER")
-    expect(described_class.new(targets: [target("a")]).advice_name).to eq("NO_GATHER")
+  it "has tag NO_GATHER" do
+    expect(described_class.tag).to eq("NO_GATHER")
   end
 
   describe ".new" do

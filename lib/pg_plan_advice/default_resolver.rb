@@ -2,6 +2,7 @@ module PgPlanAdvice
   class DefaultResolver
     def resolve(item)
       case item
+      when Ast::Target    then item
       when Symbol, String then Ast::Target.new(alias_name: item.to_s)
       when Hash
         item.map do |target, index_name|

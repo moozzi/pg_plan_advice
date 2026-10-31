@@ -1,17 +1,8 @@
 module PgPlanAdvice
   module Ast
     class MergeJoinMaterialize < Node
-      def initialize(targets:)
-        raise InvalidAdviceError, "#{advice_name} targets must not be empty" if targets.empty?
-
-        validate_nested_items!(targets)
-
-        super(targets: targets.dup.freeze)
-      end
-
-      def self.advice_name
-        "MERGE_JOIN_MATERIALIZE"
-      end
+      accepts Target, OrderedGroup
+      advice_name "MERGE_JOIN_MATERIALIZE"
     end
   end
 end

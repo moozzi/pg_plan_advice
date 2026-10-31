@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PgPlanAdvice::Ast::SeqScan do
-  it "has advice_name SEQ_SCAN" do
-    expect(described_class.advice_name).to eq("SEQ_SCAN")
-    expect(described_class.new(targets: [target("a")]).advice_name).to eq("SEQ_SCAN")
+  it "has tag SEQ_SCAN" do
+    expect(described_class.tag).to eq("SEQ_SCAN")
   end
 
   describe ".new" do
@@ -30,17 +29,17 @@ RSpec.describe PgPlanAdvice::Ast::SeqScan do
 
     it "raises on ordered groups" do
       expect { described_class.new(targets: [target("b"), ordered_group(target("a"))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only targets, got: \[.*OrderedGroup/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only target, got: \[.*OrderedGroup/)
     end
 
     it "raises on unordered groups" do
       expect { described_class.new(targets: [unordered_group(target("a"))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only targets, got: \[.*UnorderedGroup/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only target, got: \[.*UnorderedGroup/)
     end
 
     it "raises on non-AST items" do
       expect { described_class.new(targets: ["a"]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'SEQ_SCAN accepts only targets, got: ["a"]')
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'SEQ_SCAN accepts only target, got: ["a"]')
     end
 
     it "compares by value" do

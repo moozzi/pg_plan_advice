@@ -6,7 +6,7 @@ module PgPlanAdvice
       end
 
       def to_s
-        @nodes.map { |node| "#{node.class.advice_name}(#{serialize_targets(node.targets)})" }.join(" ")
+        @nodes.map { |node| "#{node.class.tag}(#{serialize_targets(node.targets)})" }.join(" ")
       end
 
       private

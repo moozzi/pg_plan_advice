@@ -1,20 +1,14 @@
 module PgPlanAdvice
   module Ast
     class ForeignJoin < Node
+      accepts OrderedGroup
+      advice_name "FOREIGN_JOIN"
+
       def initialize(targets:)
-        raise InvalidAdviceError, "#{advice_name} targets must not be empty" if targets.empty?
+        super
 
-        invalid = targets.reject { |target| target.is_a?(OrderedGroup) }
-        unless invalid.empty?
-          raise InvalidAdviceError,
-                "#{advice_name} accepts only ordered(), got: #{invalid.inspect}"
-        end
-
-        super(targets: targets.dup.freeze)
-      end
-
-      def self.advice_name
-        "FOREIGN_JOIN"
+        single = targets.select { _1.items.one? }
+        invalid!("targets must contain more than one relation identifier, got: #{single.inspect}") if single.any?
       end
     end
   end

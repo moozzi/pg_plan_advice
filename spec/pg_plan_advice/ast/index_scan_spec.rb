@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PgPlanAdvice::Ast::IndexScan do
-  it "has advice_name INDEX_SCAN" do
-    expect(described_class.advice_name).to eq("INDEX_SCAN")
-    expect(described_class.new(targets: [index_target("a", "a_idx")]).advice_name).to eq("INDEX_SCAN")
+  it "has tag INDEX_SCAN" do
+    expect(described_class.tag).to eq("INDEX_SCAN")
   end
 
   describe ".new" do
@@ -30,19 +29,19 @@ RSpec.describe PgPlanAdvice::Ast::IndexScan do
 
     it "raises on plain targets" do
       expect { described_class.new(targets: [target("a")]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, %r{accepts only target/index_name pairs, got: \[.*Target})
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /accepts only target, got: \[.*Target/)
     end
 
     it "raises on groups" do
       expect { described_class.new(targets: [ordered_group(target("a"))]) }
         .to raise_error(PgPlanAdvice::InvalidAdviceError,
-                        %r{accepts only target/index_name pairs, got: \[.*OrderedGroup})
+                        /accepts only target, got: \[.*OrderedGroup/)
     end
 
     it "raises on non-AST items" do
       expect { described_class.new(targets: ["a"]) }
         .to raise_error(PgPlanAdvice::InvalidAdviceError,
-                        'INDEX_SCAN accepts only target/index_name pairs, got: ["a"]')
+                        'INDEX_SCAN accepts only target, got: ["a"]')
     end
 
     it "compares by value" do

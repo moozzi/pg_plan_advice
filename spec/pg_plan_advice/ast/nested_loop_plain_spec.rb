@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PgPlanAdvice::Ast::NestedLoopPlain do
-  it "has advice_name NESTED_LOOP_PLAIN" do
-    expect(described_class.advice_name).to eq("NESTED_LOOP_PLAIN")
-    expect(described_class.new(targets: [target("a")]).advice_name).to eq("NESTED_LOOP_PLAIN")
+  it "has tag NESTED_LOOP_PLAIN" do
+    expect(described_class.tag).to eq("NESTED_LOOP_PLAIN")
   end
 
   describe ".new" do
@@ -34,19 +33,29 @@ RSpec.describe PgPlanAdvice::Ast::NestedLoopPlain do
       expect(described_class.new(targets: targets).targets).to eq(targets)
     end
 
-    it "raises on nested ordered groups" do
-      expect { described_class.new(targets: [ordered_group(target("a"), ordered_group(target("b")))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, "NESTED_LOOP_PLAIN: does not allow nesting")
+    it "raises on nested groups" do
+      group = ordered_group(target("a"), ordered_group(target("b"), target("c")))
+
+      expect { described_class.new(targets: [group]) }
+        .to raise_error(PgPlanAdvice::InvalidAdviceError,
+                        /\ANESTED_LOOP_PLAIN OrderedGroup may contain only targets, got: \[.*OrderedGroup/)
+    end
+
+    it "raises on non-target items in groups" do
+      expect { described_class.new(targets: [ordered_group(target("a"), "b")]) }
+        .to raise_error(PgPlanAdvice::InvalidAdviceError,
+                        /\ANESTED_LOOP_PLAIN OrderedGroup may contain only targets, got: \[.*"b"/)
     end
 
     it "raises on unordered groups" do
       expect { described_class.new(targets: [unordered_group(target("a"))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /\ANESTED_LOOP_PLAIN: invalid target: .*UnorderedGroup/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError,
+                        /\ANESTED_LOOP_PLAIN accepts only target, got: \[.*UnorderedGroup/)
     end
 
     it "raises on non-AST items" do
       expect { described_class.new(targets: ["a"]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'NESTED_LOOP_PLAIN: invalid target: "a"')
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'NESTED_LOOP_PLAIN accepts only target, got: ["a"]')
     end
 
     it "compares by value" do

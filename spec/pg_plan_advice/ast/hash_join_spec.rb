@@ -1,9 +1,8 @@
 # frozen_string_literal: true
 
 RSpec.describe PgPlanAdvice::Ast::HashJoin do
-  it "has advice_name HASH_JOIN" do
-    expect(described_class.advice_name).to eq("HASH_JOIN")
-    expect(described_class.new(targets: [target("a")]).advice_name).to eq("HASH_JOIN")
+  it "has tag HASH_JOIN" do
+    expect(described_class.tag).to eq("HASH_JOIN")
   end
 
   describe ".new" do
@@ -34,19 +33,28 @@ RSpec.describe PgPlanAdvice::Ast::HashJoin do
       expect(described_class.new(targets: targets).targets).to eq(targets)
     end
 
-    it "raises on nested ordered groups" do
-      expect { described_class.new(targets: [ordered_group(target("a"), ordered_group(target("b")))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, "HASH_JOIN: does not allow nesting")
+    it "raises on nested groups" do
+      group = ordered_group(target("a"), ordered_group(target("b"), target("c")))
+
+      expect { described_class.new(targets: [group]) }
+        .to raise_error(PgPlanAdvice::InvalidAdviceError,
+                        /\AHASH_JOIN OrderedGroup may contain only targets, got: \[.*OrderedGroup/)
+    end
+
+    it "raises on non-target items in groups" do
+      expect { described_class.new(targets: [ordered_group(target("a"), "b")]) }
+        .to raise_error(PgPlanAdvice::InvalidAdviceError,
+                        /\AHASH_JOIN OrderedGroup may contain only targets, got: \[.*"b"/)
     end
 
     it "raises on unordered groups" do
       expect { described_class.new(targets: [unordered_group(target("a"))]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, /\AHASH_JOIN: invalid target: .*UnorderedGroup/)
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, /\AHASH_JOIN accepts only target, got: \[.*UnorderedGroup/)
     end
 
     it "raises on non-AST items" do
       expect { described_class.new(targets: ["a"]) }
-        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'HASH_JOIN: invalid target: "a"')
+        .to raise_error(PgPlanAdvice::InvalidAdviceError, 'HASH_JOIN accepts only target, got: ["a"]')
     end
 
     it "compares by value" do
