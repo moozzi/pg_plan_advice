@@ -2,7 +2,7 @@ PATH
   remote: .
   specs:
     pg_plan_advice (0.1.0)
-      activerecord (~> 7.2)
+      activerecord (>= 7.2, < 9)
       pg (>= 1.1)
 
 GEM
