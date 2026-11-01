@@ -2,37 +2,83 @@
 
 ActiveRecord DSL for PostgreSQL pg_plan_advice.
 
-Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/pg_plan_advice`. To experiment with that code, run `bin/console` for an interactive prompt.
-
 ## Installation
 
-TODO: Replace `UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG` with your gem name right after releasing it to RubyGems.org. Please do not do it earlier due to security reasons. Alternatively, replace this section with instructions to install your gem from git if you don't plan to release to RubyGems.org.
+Requirements:
 
-Install the gem and add to the application's Gemfile by executing:
+- Ruby >= 3.2
+- ActiveRecord 7.2
+- PostgreSQL 19 with the `pg_plan_advice` module loaded (for example via `shared_preload_libraries`), see the [PostgreSQL documentation](https://www.postgresql.org/docs/devel/pgplanadvice.html)
+
+Add the gem to your application's Gemfile:
 
 ```bash
-bundle add UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+bundle add pg_plan_advice
 ```
 
-If bundler is not being used to manage dependencies, install the gem by executing:
+or install it from git:
 
-```bash
-gem install UPDATE_WITH_YOUR_GEM_NAME_IMMEDIATELY_AFTER_RELEASE_TO_RUBYGEMS_ORG
+```ruby
+gem "pg_plan_advice", github: "moozzi/pg_plan_advice"
 ```
 
 ## Usage
 
-TODO: Write usage instructions here
+### ActiveRecord
+
+Call `plan_advice` on a model or a relation and describe the advice in a block:
+
+```ruby
+Post.joins(:comments).plan_advice do
+  join_order :posts, :comments
+  hash_join :comments
+  seq_scan :posts
+end
+```
+
+The relation above runs with:
+
+```
+JOIN_ORDER(posts comments) HASH_JOIN(comments) SEQ_SCAN(posts)
+```
+
+### Groups
+
+Use `ordered` and `unordered` to build target groups:
+
+```ruby
+Post.plan_advice do
+  join_order :posts, ordered(:comments, unordered(:users, :tags))
+  nested_loop_plain ordered(:comments, :users)
+  foreign_join ordered(:remote_a, :remote_b)
+end
+# JOIN_ORDER(posts (comments {users tags})) NESTED_LOOP_PLAIN((comments users)) FOREIGN_JOIN((remote_a remote_b))
+```
+
+### Index advice
+
+`index_scan` and `index_only_scan` take a hash of target to index name:
+
+```ruby
+Post.plan_advice do
+  index_scan posts: :index_posts_on_user_id
+end
+# INDEX_SCAN(posts index_posts_on_user_id)
+```
 
 ## Development
 
-After checking out the repo, run `bin/setup` to install dependencies. Then, run `rake spec` to run the tests. You can also run `bin/console` for an interactive prompt that will allow you to experiment.
+After checking out the repo, run `bin/setup` to install dependencies. Then run the tests:
 
-To install this gem onto your local machine, run `bundle exec rake install`. To release a new version, update the version number in `version.rb`, and then run `bundle exec rake release`, which will create a git tag for the version, push git commits and the created tag, and push the `.gem` file to [rubygems.org](https://rubygems.org).
+```bash
+bundle exec rspec
+```
+
+Run `bin/console` for an interactive prompt that will allow you to experiment.
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/moozzi/pg_plan_advice.
+Bug reports and pull requests are welcome on GitHub at https://github.com/moozzi/pg_plan_advice/issues.
 
 ## License
 
