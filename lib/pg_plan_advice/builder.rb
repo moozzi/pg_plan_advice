@@ -130,7 +130,7 @@ module PgPlanAdvice
     end
   end
 
-  def self.build(resolver: DefaultResolver, &block)
+  def self.build(resolver: DefaultResolver.new, &block)
     builder = Builder.new(resolver:)
     builder.instance_exec(&block)
     builder.result
