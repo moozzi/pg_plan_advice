@@ -18,7 +18,7 @@ module PgPlanAdvice
           when Ast::IndexTarget    then "#{serialize_targets([target.target])} #{target.index_name}"
           when Ast::OrderedGroup   then "(#{serialize_targets(target.items)})"
           when Ast::UnorderedGroup then "{#{serialize_targets(target.items)}}"
-          else raise "invalid target #{target.class}"
+          else raise InvalidAdviceError, "unable to serialize: #{target.class}"
           end
         end.join(" ")
       end
