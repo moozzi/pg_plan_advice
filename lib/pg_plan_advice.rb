@@ -1,9 +1,20 @@
 # frozen_string_literal: true
 
+require "active_record"
+
 require_relative "pg_plan_advice/version"
 require_relative "pg_plan_advice/builder"
+require_relative "pg_plan_advice/ar/execution"
+require_relative "pg_plan_advice/ar/querying"
+require_relative "pg_plan_advice/ar/relation"
+require_relative "pg_plan_advice/ar/resolver"
 
 module PgPlanAdvice
   class Error < StandardError; end
-  class InvalidAdviceError < StandardError; end
+  class InvalidAdviceError < Error; end
+end
+
+ActiveSupport.on_load(:active_record) do
+  ::ActiveRecord::Relation.prepend(PgPlanAdvice::AR::Relation)
+  extend PgPlanAdvice::AR::Querying
 end
