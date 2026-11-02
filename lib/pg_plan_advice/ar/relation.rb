@@ -10,6 +10,14 @@ module PgPlanAdvice
         end
       end
 
+      def exec_explain(*args, **kwargs, &blk)
+        return super unless plan_advice_value
+
+        klass.with_connection do |conn|
+          Execution.with_advice(conn, plan_advice_value.to_s) { super(*args, **kwargs, &blk) }
+        end
+      end
+
       private
 
       def exec_main_query(*args, **kwargs, &blk)
