@@ -1,12 +1,18 @@
 module PgPlanAdvice
   module Ast
     class AdviceSet
+      attr_reader :nodes
+
       def initialize(nodes)
         @nodes = nodes
       end
 
       def to_s
         @nodes.map { |node| "#{node.class.tag}(#{serialize_targets(node.targets)})" }.join(" ")
+      end
+
+      def merge(advice_set)
+        self.class.new(nodes + advice_set.nodes)
       end
 
       private
