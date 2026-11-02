@@ -19,13 +19,13 @@ module PgPlanAdvice
     # BITMAP_HEAP_SCAN(target [ ... ])
     # DO_NOT_SCAN(target [ ... ])
     #
-    def seq_scan(*targets) = add(Ast::SeqScan, targets)
-    def tid_scan(*targets) = add(Ast::TidScan, targets)
-    def index_scan(targets) = add_index(Ast::IndexScan, targets)
-    def index_only_scan(targets) = add_index(Ast::IndexOnlyScan, targets)
-    def foreign_join(*targets) = add(Ast::ForeignJoin, targets)
+    def seq_scan(*targets)         = add(Ast::SeqScan, targets)
+    def tid_scan(*targets)         = add(Ast::TidScan, targets)
+    def index_scan(targets)        = add_index(Ast::IndexScan, targets)
+    def index_only_scan(targets)   = add_index(Ast::IndexOnlyScan, targets)
+    def foreign_join(*targets)     = add(Ast::ForeignJoin, targets)
     def bitmap_heap_scan(*targets) = add(Ast::BitmapHeapScan, targets)
-    def do_not_scan(*targets) = add(Ast::DoNotScan, targets)
+    def do_not_scan(*targets)      = add(Ast::DoNotScan, targets)
 
     #
     # Join order advice
