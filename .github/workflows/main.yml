@@ -16,7 +16,7 @@ jobs:
       matrix:
         os:
           - ubuntu-latest
-          - macos-latest
+          # - macos-latest # too much overhead for now
         ruby:
           - '3.2'
           - '3.3'
@@ -24,7 +24,7 @@ jobs:
           - '4.0'
         rails:
           - '7.2'
-          - '8.0'
+          # - '8.0' # too much overhead for now
           - '8.1'
 
     env:
