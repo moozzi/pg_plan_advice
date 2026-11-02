@@ -125,6 +125,10 @@ module PgPlanAdvice
     def normalize(item)
       case item
       when Ast::Target, Ast::OrderedGroup, Ast::UnorderedGroup then item
+      when Hash
+        item.map do |target, index_name|
+          Ast::IndexTarget.new(normalize(target), index_name)
+        end
       else @resolver.resolve(item)
       end
     end
