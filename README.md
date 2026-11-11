@@ -19,7 +19,7 @@ Add the gem to your application's Gemfile:
 bundle add pg_plan_advice
 ```
 
-or install it from git:
+or add it manually:
 
 ```ruby
 gem "pg_plan_advice"
