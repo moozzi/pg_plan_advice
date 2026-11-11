@@ -20,10 +20,9 @@ module PgPlanAdvice
       def serialize_targets(targets)
         targets.map do |target|
           case target
-          when Ast::Target         then target.to_s
-          when Ast::IndexTarget    then "#{serialize_targets([target.target])} #{target.index_name}"
-          when Ast::OrderedGroup   then "(#{serialize_targets(target.items)})"
-          when Ast::UnorderedGroup then "{#{serialize_targets(target.items)}}"
+          when Ast::Target, Ast::IndexTarget then target.to_s
+          when Ast::OrderedGroup             then "(#{serialize_targets(target.items)})"
+          when Ast::UnorderedGroup           then "{#{serialize_targets(target.items)}}"
           else raise InvalidAdviceError, "unable to serialize: #{target.class}"
           end
         end.join(" ")

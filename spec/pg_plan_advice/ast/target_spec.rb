@@ -32,6 +32,13 @@ RSpec.describe PgPlanAdvice::Ast::Target do
       expect(described_class.new(alias_name: "a", occurrence_number: 3).occurrence_number).to eq(3)
     end
 
+    it "quotes identifiers that need quoting" do
+      target = described_class.new(alias_name: "A", partition_schema: "My Schema", partition_name: "p-1",
+                                   plan_name: "Sub")
+
+      expect(target.to_s).to eq('"A"/"My Schema"."p-1"@"Sub"')
+    end
+
     [0, -1, "2", 1.5].each do |value|
       it "raises on occurrence number #{value.inspect}" do
         expect { described_class.new(alias_name: "a", occurrence_number: value) }

@@ -13,7 +13,7 @@ module PgPlanAdvice
       end
 
       def to_s
-        "#{target} #{index_name}"
+        "#{target} #{index_name.split(".", 2).map { Identifier.quote(_1) }.join(".")}"
       end
     end
   end
