@@ -2,6 +2,9 @@
 
 ActiveRecord DSL for PostgreSQL pg_plan_advice.
 
+> [!WARNING]
+> This gem is in active development. The API may change without notice and it should not be used in production.
+
 ## Installation
 
 Requirements:
@@ -19,7 +22,7 @@ bundle add pg_plan_advice
 or install it from git:
 
 ```ruby
-gem "pg_plan_advice", github: "moozzi/pg_plan_advice"
+gem "pg_plan_advice"
 ```
 
 ## Usage
